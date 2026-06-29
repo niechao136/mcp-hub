@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.apis.auth import auth_router
 from src.apis.llm import llm_router
+from src.apis.mcp import mcp_router
 from src.apis.user import user_router
 from src.dbs.checkpointer import get_checkpointer
 from src.dbs.postgre import init_pool, close_pool, init_db
@@ -42,6 +43,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(llm_router)
+app.include_router(mcp_router)
 app.include_router(user_router)
 
 

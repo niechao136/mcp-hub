@@ -170,3 +170,81 @@ FROM llm_models
 WHERE deleted_at IS NULL AND is_active = TRUE
 ORDER BY created_at DESC;
 """
+
+
+DML_MCP_SERVER_LIST = """
+SELECT id, name, description, transport, command, args, env, url, headers, status, last_checked_at, tools_cache, created_by, created_at, updated_at
+FROM mcp_servers
+WHERE deleted_at IS NULL
+ORDER BY {order_by} {direction}
+LIMIT %s OFFSET %s;
+"""
+
+
+DML_MCP_SERVER_COUNT = """
+SELECT COUNT(*) AS total
+FROM mcp_servers
+WHERE deleted_at IS NULL;
+"""
+
+
+DML_MCP_SERVER_GET_BY_ID = """
+SELECT id, name, description, transport, command, args, env, url, headers, status, last_checked_at, tools_cache, created_by, created_at, updated_at
+FROM mcp_servers
+WHERE id = %s AND deleted_at IS NULL;
+"""
+
+
+DML_MCP_SERVER_GET_BY_NAME = """
+SELECT id, name, description, transport, command, args, env, url, headers, status, last_checked_at, tools_cache, created_by, created_at, updated_at
+FROM mcp_servers
+WHERE name = %s AND deleted_at IS NULL;
+"""
+
+
+DML_MCP_SERVER_CREATE = """
+INSERT INTO mcp_servers (name, description, transport, command, args, env, url, headers, status, created_by)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+ON CONFLICT (name) WHERE deleted_at IS NULL DO NOTHING
+RETURNING id, name, description, transport, command, args, env, url, headers, status, last_checked_at, tools_cache, created_by, created_at;
+"""
+
+
+DML_MCP_SERVER_UPDATE = """
+UPDATE mcp_servers
+SET name = %s, description = %s, transport = %s, command = %s, args = %s, env = %s, url = %s, headers = %s
+WHERE id = %s AND deleted_at IS NULL
+RETURNING id, name, description, transport, command, args, env, url, headers, status, last_checked_at, tools_cache, created_by, updated_at;
+"""
+
+
+DML_MCP_SERVER_DELETE = """
+UPDATE mcp_servers
+SET deleted_at = NOW()
+WHERE id = ANY(%s) AND deleted_at IS NULL
+RETURNING id, name;
+"""
+
+
+DML_MCP_SERVER_LIST_ACTIVE = """
+SELECT id, name, description, transport, command, args, env, url, headers, status, last_checked_at, tools_cache, created_by, created_at, updated_at
+FROM mcp_servers
+WHERE deleted_at IS NULL
+ORDER BY created_at DESC;
+"""
+
+
+DML_MCP_SERVER_UPDATE_STATUS = """
+UPDATE mcp_servers
+SET status = %s, last_checked_at = NOW()
+WHERE id = %s AND deleted_at IS NULL
+RETURNING id, status, last_checked_at;
+"""
+
+
+DML_MCP_SERVER_UPDATE_TOOLS_CACHE = """
+UPDATE mcp_servers
+SET tools_cache = %s
+WHERE id = %s AND deleted_at IS NULL
+RETURNING id;
+"""
