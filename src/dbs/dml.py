@@ -101,3 +101,72 @@ SET password = %s
 WHERE id = %s AND deleted_at IS NULL
 RETURNING id;
 """
+
+
+DML_LLM_MODEL_LIST = """
+SELECT id, display_name, provider, model_id, base_url, context_window, max_tokens, supports_tool_call, supports_vision, is_active, created_at, updated_at
+FROM llm_models
+WHERE deleted_at IS NULL
+ORDER BY {order_by} {direction}
+LIMIT %s OFFSET %s;
+"""
+
+
+DML_LLM_MODEL_COUNT = """
+SELECT COUNT(*) AS total
+FROM llm_models
+WHERE deleted_at IS NULL;
+"""
+
+
+DML_LLM_MODEL_GET_BY_ID = """
+SELECT id, display_name, provider, model_id, base_url, context_window, max_tokens, supports_tool_call, supports_vision, is_active, created_at, updated_at
+FROM llm_models
+WHERE id = %s AND deleted_at IS NULL;
+"""
+
+
+DML_LLM_MODEL_GET_BY_ID_WITH_KEY = """
+SELECT id, display_name, provider, model_id, base_url, api_key, context_window, max_tokens, supports_tool_call, supports_vision, is_active, created_at, updated_at
+FROM llm_models
+WHERE id = %s AND deleted_at IS NULL;
+"""
+
+
+DML_LLM_MODEL_GET_BY_PROVIDER_MODEL = """
+SELECT id, display_name, provider, model_id, base_url, context_window, max_tokens, supports_tool_call, supports_vision, is_active, created_at, updated_at
+FROM llm_models
+WHERE provider = %s AND model_id = %s AND deleted_at IS NULL;
+"""
+
+
+DML_LLM_MODEL_CREATE = """
+INSERT INTO llm_models (display_name, provider, model_id, base_url, api_key, context_window, max_tokens, supports_tool_call, supports_vision, is_active)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+ON CONFLICT (provider, model_id) WHERE deleted_at IS NULL DO NOTHING
+RETURNING id, display_name, provider, model_id, base_url, context_window, max_tokens, supports_tool_call, supports_vision, is_active, created_at;
+"""
+
+
+DML_LLM_MODEL_UPDATE = """
+UPDATE llm_models
+SET display_name = %s, provider = %s, model_id = %s, base_url = %s, api_key = %s, context_window = %s, max_tokens = %s, supports_tool_call = %s, supports_vision = %s, is_active = %s
+WHERE id = %s AND deleted_at IS NULL
+RETURNING id, display_name, provider, model_id, base_url, context_window, max_tokens, supports_tool_call, supports_vision, is_active, updated_at;
+"""
+
+
+DML_LLM_MODEL_DELETE = """
+UPDATE llm_models
+SET deleted_at = NOW()
+WHERE id = ANY(%s) AND deleted_at IS NULL
+RETURNING id, display_name;
+"""
+
+
+DML_LLM_MODEL_LIST_ACTIVE = """
+SELECT id, display_name, provider, model_id, base_url, context_window, max_tokens, supports_tool_call, supports_vision, is_active, created_at, updated_at
+FROM llm_models
+WHERE deleted_at IS NULL AND is_active = TRUE
+ORDER BY created_at DESC;
+"""
