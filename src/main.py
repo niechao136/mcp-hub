@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.apis.agent import agent_router
 from src.apis.auth import auth_router
 from src.apis.llm import llm_router
 from src.apis.mcp import mcp_router
@@ -41,6 +42,7 @@ app.add_middleware(
 )
 
 
+app.include_router(agent_router)
 app.include_router(auth_router)
 app.include_router(llm_router)
 app.include_router(mcp_router)
