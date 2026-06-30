@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
+import { getServerMode } from "@/utils/cookie";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,15 +8,17 @@ export const metadata: Metadata = {
   description: "MCP Hub Management Platform",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialMode = await getServerMode();
+
   return (
     <html lang="zh-CN" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
-        <Providers>{children}</Providers>
+        <Providers initialMode={initialMode}>{children}</Providers>
       </body>
     </html>
   );
