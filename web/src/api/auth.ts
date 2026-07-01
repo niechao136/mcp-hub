@@ -53,7 +53,7 @@ export const authApi = {
   },
 
   getProfile: async (): Promise<DataResult<TokenDict>> => {
-    const response = await fetch(`${API_BASE_URL}/user/profile/me`, {
+    const response = await fetch(`${API_BASE_URL}/user/me`, {
       method: "GET",
       headers: getAuthHeaders(),
     });
