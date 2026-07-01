@@ -3,57 +3,56 @@ import type { DataResult } from "./base";
 
 export interface LlmModel {
   id: string;
-  name: string;
+  display_name: string;
   provider: string;
-  model: string;
-  api_key: string | null;
+  model_id: string;
   base_url: string | null;
-  max_tokens: number;
-  temperature: number;
-  top_p: number;
-  frequency_penalty: number;
-  presence_penalty: number;
+  context_window: number | null;
+  max_tokens: number | null;
+  supports_tool_call: boolean;
+  supports_vision: boolean;
+  is_active: boolean;
   created_at: string;
-  updated_at: string;
+  updated_at: string | null;
 }
 
 export interface LlmListQuery {
   page: number;
-  page_size: number;
+  size: number;
   keyword?: string;
-  sort_by?: string;
-  sort_order?: "asc" | "desc";
+  order_by?: string;
+  direction?: "asc" | "desc";
 }
 
 export interface LlmCreate {
-  name: string;
+  display_name: string;
   provider: string;
-  model: string;
-  api_key?: string;
+  model_id: string;
   base_url?: string;
+  api_key?: string;
+  context_window?: number;
   max_tokens?: number;
-  temperature?: number;
-  top_p?: number;
-  frequency_penalty?: number;
-  presence_penalty?: number;
+  supports_tool_call?: boolean;
+  supports_vision?: boolean;
+  is_active?: boolean;
 }
 
 export interface LlmUpdate {
-  name?: string;
+  display_name?: string;
   provider?: string;
-  model?: string;
-  api_key?: string;
+  model_id?: string;
   base_url?: string;
+  api_key?: string;
+  context_window?: number;
   max_tokens?: number;
-  temperature?: number;
-  top_p?: number;
-  frequency_penalty?: number;
-  presence_penalty?: number;
+  supports_tool_call?: boolean;
+  supports_vision?: boolean;
+  is_active?: boolean;
 }
 
 export const llmApi = {
   list: async (params: LlmListQuery): Promise<DataResult<LlmModel[]>> => {
-    return request.get("/llm/models", { params });
+    return request.get("/llm/models/list", { params });
   },
 
   count: async (): Promise<DataResult<number>> => {

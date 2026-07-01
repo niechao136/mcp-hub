@@ -38,7 +38,7 @@ async def login(
         return DataResult(status=0, msg="Username or password is incorrect")
 
     user_id = str(row["id"])
-    token = create_access_token(TokenDict(id=user_id, name=user.username, role=row["role"]))
+    token = create_access_token(TokenDict(id=user_id, username=user.username, role=row["role"]))
     return DataResult(status=1, data=token)
 
 

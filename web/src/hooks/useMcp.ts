@@ -6,6 +6,10 @@ export function useMcpServers(query: McpListQuery) {
   return useQuery({
     queryKey: ["mcpServers", query],
     queryFn: () => mcpApi.list(query),
+    select: (data) => ({
+      ...data,
+      data: data.data,
+    }),
   });
 }
 

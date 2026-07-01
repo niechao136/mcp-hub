@@ -39,7 +39,7 @@ export default function UsersPage() {
 
   const usersQuery = useUsers({
     page: page + 1,
-    page_size: pageSize,
+    size: pageSize,
     keyword: keyword || undefined,
   });
 

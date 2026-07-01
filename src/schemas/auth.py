@@ -5,7 +5,7 @@ from .user import UserRole
 
 class TokenDict(BaseModel):
     id: str = Field(..., description="用户 ID")
-    name: str = Field(..., description="用户名")
+    username: str = Field(..., description="用户名")
     role: UserRole = Field(..., description="用户权限")
 
 class UserLogin(BaseModel):

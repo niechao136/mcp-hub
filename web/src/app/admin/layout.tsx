@@ -22,12 +22,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box component="main" sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
         <TopBar />
-        <Toolbar />
-        <Box sx={{ p: 3 }}>{children}</Box>
+        <Box sx={{ flexGrow: 1, p: 3 }}>{children}</Box>
       </Box>
     </Box>
   );

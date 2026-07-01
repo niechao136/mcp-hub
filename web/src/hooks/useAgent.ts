@@ -6,6 +6,10 @@ export function useAgents(query: AgentListQuery) {
   return useQuery({
     queryKey: ["agents", query],
     queryFn: () => agentApi.list(query),
+    select: (data) => ({
+      ...data,
+      data: data.data,
+    }),
   });
 }
 
@@ -67,7 +71,7 @@ export function useAgentMcpServers(agentId: string) {
 export function useAddAgentMcpServer() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ agentId, mcpServerId }: { agentId: string; mcpServerId: string }) => 
+    mutationFn: ({ agentId, mcpServerId }: { agentId: string; mcpServerId: string }) =>
       agentApi.addMcpServer(agentId, mcpServerId),
     onSuccess: (_data, { agentId }) => {
       queryClient.invalidateQueries({ queryKey: ["agentMcpServers", agentId] });
@@ -78,7 +82,7 @@ export function useAddAgentMcpServer() {
 export function useRemoveAgentMcpServer() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ agentId, mcpServerId }: { agentId: string; mcpServerId: string }) => 
+    mutationFn: ({ agentId, mcpServerId }: { agentId: string; mcpServerId: string }) =>
       agentApi.removeMcpServer(agentId, mcpServerId),
     onSuccess: (_data, { agentId }) => {
       queryClient.invalidateQueries({ queryKey: ["agentMcpServers", agentId] });

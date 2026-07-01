@@ -6,18 +6,17 @@ export interface UserInfo {
   username: string;
   email: string | null;
   role: string;
-  avatar: string | null;
   is_active: boolean;
   created_at: string;
-  updated_at: string;
+  updated_at: string | null;
 }
 
 export interface UserListQuery {
   page: number;
-  page_size: number;
+  size: number;
   keyword?: string;
-  sort_by?: string;
-  sort_order?: "asc" | "desc";
+  order_by?: string;
+  direction?: "asc" | "desc";
 }
 
 export interface UserCreate {
@@ -31,7 +30,6 @@ export interface UserUpdate {
   username?: string;
   email?: string;
   role?: string;
-  is_active?: boolean;
 }
 
 export interface ChangePassword {
@@ -46,38 +44,38 @@ export interface ResetPassword {
 
 export const userApi = {
   list: async (params: UserListQuery): Promise<DataResult<UserInfo[]>> => {
-    return request.get("/users", { params });
+    return request.get("/user/list", { params });
   },
 
   count: async (): Promise<DataResult<number>> => {
-    return request.get("/users/count");
+    return request.get("/user/count");
   },
 
   get: async (userId: string): Promise<DataResult<UserInfo>> => {
-    return request.get(`/users/${userId}`);
+    return request.get(`/user/${userId}`);
   },
 
   create: async (data: UserCreate): Promise<DataResult<UserInfo>> => {
-    return request.post("/users", data);
+    return request.post("/user", data);
   },
 
   update: async (userId: string, data: UserUpdate): Promise<DataResult<UserInfo>> => {
-    return request.put(`/users/${userId}`, data);
+    return request.put(`/user/${userId}`, data);
   },
 
   delete: async (ids: string[]): Promise<DataResult<{ id: string; username: string }[]>> => {
-    return request.post("/users/batch-delete", { ids });
+    return request.post("/user/batch", { ids });
   },
 
-  resetPassword: async (data: ResetPassword): Promise<DataResult<void>> => {
-    return request.post("/users/reset-password", data);
+  resetPassword: async (userId: string, newPassword: string): Promise<DataResult<void>> => {
+    return request.post(`/user/${userId}/reset-password`, { new_password: newPassword });
   },
 
   changePassword: async (data: ChangePassword): Promise<DataResult<void>> => {
-    return request.post("/users/change-password", data);
+    return request.post("/user/change-password", data);
   },
 
   profile: async (): Promise<DataResult<UserInfo>> => {
-    return request.get("/users/profile");
+    return request.get("/user/me");
   },
 };

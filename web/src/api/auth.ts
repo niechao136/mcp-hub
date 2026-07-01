@@ -15,7 +15,7 @@ export interface UserRegister {
 
 export interface TokenDict {
   id: string;
-  name: string;
+  username: string;
   role: string;
 }
 

@@ -34,7 +34,7 @@ export default function TopBar() {
   };
 
   return (
-    <AppBar position="static" sx={{ ml: 240 }}>
+    <AppBar position="static">
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Typography variant="h6" component="div">
           管理中心
@@ -67,7 +67,7 @@ export default function TopBar() {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              {user && <MenuItem onClick={handleClose}>{user.name}</MenuItem>}
+              {user && <MenuItem onClick={handleClose}>{user.username}</MenuItem>}
               <MenuItem onClick={handleLogout}>
                 <Logout sx={{ mr: 1 }} />
                 退出登录

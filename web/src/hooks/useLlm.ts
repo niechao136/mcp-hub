@@ -6,6 +6,10 @@ export function useLlmModels(query: LlmListQuery) {
   return useQuery({
     queryKey: ["llmModels", query],
     queryFn: () => llmApi.list(query),
+    select: (data) => ({
+      ...data,
+      data: data.data,
+    }),
   });
 }
 

@@ -6,6 +6,10 @@ export function useUsers(query: UserListQuery) {
   return useQuery({
     queryKey: ["users", query],
     queryFn: () => userApi.list(query),
+    select: (data) => ({
+      ...data,
+      data: data.data,
+    }),
   });
 }
 
@@ -58,7 +62,8 @@ export function useDeleteUsers() {
 
 export function useResetPassword() {
   return useMutation({
-    mutationFn: (data: ResetPassword) => userApi.resetPassword(data),
+    mutationFn: ({ userId, newPassword }: { userId: string; newPassword: string }) =>
+      userApi.resetPassword(userId, newPassword),
   });
 }
 

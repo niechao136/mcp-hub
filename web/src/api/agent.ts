@@ -5,43 +5,48 @@ export interface Agent {
   id: string;
   name: string;
   description: string | null;
-  model_id: string;
-  model_name: string;
+  llm_model_id: string;
+  llm_model_name: string | null;
   system_prompt: string;
   temperature: number;
-  max_tokens: number;
-  context_window: number;
+  max_tokens: number | null;
+  memory_strategy: string;
+  memory_window: number;
   is_active: boolean;
+  created_by: string;
   created_at: string;
-  updated_at: string;
+  updated_at: string | null;
 }
 
 export interface AgentListQuery {
   page: number;
-  page_size: number;
+  size: number;
   keyword?: string;
-  sort_by?: string;
-  sort_order?: "asc" | "desc";
+  order_by?: string;
+  direction?: "asc" | "desc";
 }
 
 export interface AgentCreate {
   name: string;
   description?: string;
-  model_id: string;
+  llm_model_id: string;
   system_prompt: string;
   temperature?: number;
   max_tokens?: number;
-  context_window?: number;
+  memory_strategy?: string;
+  memory_window?: number;
+  is_active?: boolean;
 }
 
 export interface AgentUpdate {
   name?: string;
   description?: string;
-  model_id?: string;
+  llm_model_id?: string;
   system_prompt?: string;
   temperature?: number;
   max_tokens?: number;
-  context_window?: number;
+  memory_strategy?: string;
+  memory_window?: number;
   is_active?: boolean;
 }
 
@@ -56,38 +61,38 @@ export interface AgentMcpServer {
 
 export const agentApi = {
   list: async (params: AgentListQuery): Promise<DataResult<Agent[]>> => {
-    return request.get("/agent/agents", { params });
+    return request.get("/agent/list", { params });
   },
 
   count: async (): Promise<DataResult<number>> => {
-    return request.get("/agent/agents/count");
+    return request.get("/agent/count");
   },
 
   get: async (agentId: string): Promise<DataResult<Agent>> => {
-    return request.get(`/agent/agents/${agentId}`);
+    return request.get(`/agent/${agentId}`);
   },
 
   create: async (data: AgentCreate): Promise<DataResult<Agent>> => {
-    return request.post("/agent/agents", data);
+    return request.post("/agent", data);
   },
 
   update: async (agentId: string, data: AgentUpdate): Promise<DataResult<Agent>> => {
-    return request.put(`/agent/agents/${agentId}`, data);
+    return request.put(`/agent/${agentId}`, data);
   },
 
   delete: async (ids: string[]): Promise<DataResult<{ id: string; name: string }[]>> => {
-    return request.post("/agent/agents/batch-delete", { ids });
+    return request.post("/agent/batch-delete", { ids });
   },
 
   getMcpServers: async (agentId: string): Promise<DataResult<AgentMcpServer[]>> => {
-    return request.get(`/agent/agents/${agentId}/mcp-servers`);
+    return request.get(`/agent/${agentId}/mcp-servers`);
   },
 
   addMcpServer: async (agentId: string, mcpServerId: string): Promise<DataResult<AgentMcpServer>> => {
-    return request.post(`/agent/agents/${agentId}/mcp-servers`, { mcp_server_id: mcpServerId });
+    return request.post(`/agent/${agentId}/mcp-servers`, { mcp_server_id: mcpServerId });
   },
 
   removeMcpServer: async (agentId: string, mcpServerId: string): Promise<DataResult<void>> => {
-    return request.delete(`/agent/agents/${agentId}/mcp-servers/${mcpServerId}`);
+    return request.delete(`/agent/${agentId}/mcp-servers/${mcpServerId}`);
   },
 };

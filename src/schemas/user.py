@@ -14,6 +14,7 @@ class UserInfo(BaseModel):
     username: str = Field(..., description="用户名")
     email: str | None = Field(None, description="邮箱")
     role: UserRole = Field(..., description="用户权限")
+    is_active: bool = Field(True, description="是否启用")
     created_at: datetime = Field(..., description="创建时间")
     updated_at: datetime | None = Field(None, description="更新时间")
 

@@ -16,7 +16,7 @@ export const useLogin = () => {
         const decodedPayload = JSON.parse(atob(base64Url + padding));
         setUser({
           id: decodedPayload.id,
-          name: decodedPayload.name,
+          username: decodedPayload.username,
           role: decodedPayload.role,
         });
       }

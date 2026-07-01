@@ -4,47 +4,54 @@ import type { DataResult } from "./base";
 export interface McpServer {
   id: string;
   name: string;
-  transport: string;
-  endpoint: string;
-  config: string | null;
-  status: string;
-  health_check_url: string | null;
   description: string | null;
+  transport: string;
+  command: string | null;
+  args: any[] | null;
+  env: Record<string, string> | null;
+  url: string | null;
+  headers: Record<string, string> | null;
+  status: string;
+  last_checked_at: string | null;
+  tools_cache: any[] | null;
+  created_by: string;
   created_at: string;
-  updated_at: string;
+  updated_at: string | null;
 }
 
 export interface McpListQuery {
   page: number;
-  page_size: number;
+  size: number;
   keyword?: string;
-  sort_by?: string;
-  sort_order?: "asc" | "desc";
+  order_by?: string;
+  direction?: "asc" | "desc";
 }
 
 export interface McpCreate {
   name: string;
-  transport: string;
-  endpoint: string;
-  config?: string;
-  status?: string;
-  health_check_url?: string;
   description?: string;
+  transport: string;
+  command?: string;
+  args?: any[];
+  env?: Record<string, string>;
+  url?: string;
+  headers?: Record<string, string>;
 }
 
 export interface McpUpdate {
   name?: string;
-  transport?: string;
-  endpoint?: string;
-  config?: string;
-  status?: string;
-  health_check_url?: string;
   description?: string;
+  transport?: string;
+  command?: string;
+  args?: any[];
+  env?: Record<string, string>;
+  url?: string;
+  headers?: Record<string, string>;
 }
 
 export const mcpApi = {
   list: async (params: McpListQuery): Promise<DataResult<McpServer[]>> => {
-    return request.get("/mcp/servers", { params });
+    return request.get("/mcp/servers/list", { params });
   },
 
   count: async (): Promise<DataResult<number>> => {
