@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { authApi, UserLogin, UserRegister, TokenDict } from "@/api/auth";
+import { authApi, UserLogin, UserRegister } from "@/api/auth";
 import { useAuthStore } from "@/store/auth";
 
 export const useLogin = () => {
@@ -31,18 +31,9 @@ export const useRegister = () => {
 };
 
 export const useProfile = () => {
-  const setUser = useAuthStore((state) => state.setUser);
-
-  return useQuery<TokenDict, Error>({
+  return useQuery({
     queryKey: ["profile"],
-    queryFn: async () => {
-      const result = await authApi.getProfile();
-      if (result.status === 1 && result.data) {
-        setUser(result.data);
-        return result.data;
-      }
-      throw new Error(result.msg);
-    },
+    queryFn: () => authApi.getProfile(),
     enabled: !!authApi.getToken(),
   });
 };
@@ -50,10 +41,11 @@ export const useProfile = () => {
 export const useLogout = () => {
   const logout = useAuthStore((state) => state.logout);
 
-  const handleLogout = () => {
-    authApi.removeToken();
-    logout();
-  };
-
-  return handleLogout;
+  return useMutation({
+    mutationFn: async () => {
+      authApi.removeToken();
+      logout();
+      return Promise.resolve();
+    },
+  });
 };

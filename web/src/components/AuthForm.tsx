@@ -48,7 +48,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
         setError(result.msg);
         return;
       }
-      router.push("/");
+      router.push("/admin");
     } else {
       const result = await registerMutation.mutateAsync(data as UserRegister);
       if (result.status !== 1) {

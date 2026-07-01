@@ -6,6 +6,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeContext } from "@/context/ThemeContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { saveMode, getClientMode } from "@/utils/cookie";
 
 const queryClient = new QueryClient();
@@ -45,7 +46,7 @@ export function Providers({ children, initialMode }: ProvidersProps) {
         <QueryClientProvider client={queryClient}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            {children}
+            <AuthProvider>{children}</AuthProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </AppRouterCacheProvider>
