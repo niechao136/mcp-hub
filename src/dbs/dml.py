@@ -54,11 +54,7 @@ DML_USER_LIST = """
 SELECT id, username, email, role, created_at, updated_at
 FROM users
 WHERE deleted_at IS NULL
-    AND (
-        %s IS NULL
-        OR username ILIKE %s
-        OR email ILIKE %s
-    )
+    {where_clause}
 ORDER BY {order_by} {direction}
 LIMIT %s OFFSET %s;
 """
@@ -67,7 +63,8 @@ LIMIT %s OFFSET %s;
 DML_USER_COUNT = """
 SELECT COUNT(*) AS total
 FROM users
-WHERE deleted_at IS NULL;
+WHERE deleted_at IS NULL
+    {where_clause};
 """
 
 

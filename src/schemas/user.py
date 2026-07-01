@@ -1,7 +1,8 @@
 from enum import Enum
 from datetime import datetime
 from uuid import UUID
-from pydantic import BaseModel, Field
+from typing import Any
+from pydantic import BaseModel, Field, model_validator
 
 
 class UserRole(str, Enum):
@@ -17,6 +18,13 @@ class UserInfo(BaseModel):
     is_active: bool = Field(True, description="是否启用")
     created_at: datetime = Field(..., description="创建时间")
     updated_at: datetime | None = Field(None, description="更新时间")
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_default_is_active(cls, data: Any) -> Any:
+        if isinstance(data, dict) and "is_active" not in data:
+            data["is_active"] = True
+        return data
 
 
 class UserCreate(BaseModel):

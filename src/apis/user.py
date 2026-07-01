@@ -60,22 +60,26 @@ async def get_user_list(
         direction = "desc"
 
     keyword = params.keyword
-    like_pattern = f"%{keyword}%" if keyword else None
 
-    sql_list = dml.DML_USER_LIST.format(order_by=order_by, direction=direction)
+    if keyword:
+        like_pattern = f"%{keyword}%"
+        where_clause = "AND (username ILIKE %s OR email ILIKE %s)"
+        list_params = (like_pattern, like_pattern, params.size, params.offset)
+        count_params = (like_pattern, like_pattern)
+    else:
+        where_clause = ""
+        list_params = (params.size, params.offset)
+        count_params = ()
+
+    sql_list = dml.DML_USER_LIST.format(order_by=order_by, direction=direction, where_clause=where_clause)
+    sql_count = dml.DML_USER_COUNT.format(where_clause=where_clause)
 
     async with pool.connection() as conn:
         async with conn.transaction():
-            cur = await conn.execute(
-                sql_list,
-                (keyword, like_pattern, like_pattern, params.size, params.offset),
-            )
+            cur = await conn.execute(sql_list, list_params)
             rows = await cur.fetchall()
 
-            cur_count = await conn.execute(
-                dml.DML_USER_COUNT,
-                (keyword, like_pattern, like_pattern),
-            )
+            cur_count = await conn.execute(sql_count, count_params)
             count_row = await cur_count.fetchone()
 
     total = count_row["total"] if count_row else 0
@@ -101,9 +105,10 @@ async def get_user_count(
     _: TokenDict = Depends(get_current_admin_user),
     pool=Depends(get_db_pool),
 ):
+    sql_count = dml.DML_USER_COUNT.format(where_clause="")
     async with pool.connection() as conn:
         async with conn.transaction():
-            cur = await conn.execute(dml.DML_USER_COUNT)
+            cur = await conn.execute(sql_count)
             row = await cur.fetchone()
 
     total = row["total"] if row else 0
