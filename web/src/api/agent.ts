@@ -1,5 +1,5 @@
 import { request } from "./base";
-import type { DataResult } from "./base";
+import type { DataResult, PageResult } from "./base";
 
 export interface Agent {
   id: string;
@@ -60,7 +60,7 @@ export interface AgentMcpServer {
 }
 
 export const agentApi = {
-  list: async (params: AgentListQuery): Promise<DataResult<Agent[]>> => {
+  list: async (params: AgentListQuery): Promise<DataResult<PageResult<Agent>>> => {
     return request.get("/agent/list", { params });
   },
 

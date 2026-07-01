@@ -1,5 +1,5 @@
 import { request } from "./base";
-import type { DataResult } from "./base";
+import type { DataResult, PageResult } from "./base";
 
 export interface UserInfo {
   id: string;
@@ -43,7 +43,7 @@ export interface ResetPassword {
 }
 
 export const userApi = {
-  list: async (params: UserListQuery): Promise<DataResult<UserInfo[]>> => {
+  list: async (params: UserListQuery): Promise<DataResult<PageResult<UserInfo>>> => {
     return request.get("/user/list", { params });
   },
 

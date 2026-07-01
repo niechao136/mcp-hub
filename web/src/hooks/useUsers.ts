@@ -8,7 +8,7 @@ export function useUsers(query: UserListQuery) {
     queryFn: () => userApi.list(query),
     select: (data) => ({
       ...data,
-      data: data.data,
+      data: data.data?.data || [],
     }),
   });
 }

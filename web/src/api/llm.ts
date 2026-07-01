@@ -1,5 +1,5 @@
 import { request } from "./base";
-import type { DataResult } from "./base";
+import type { DataResult, PageResult } from "./base";
 
 export interface LlmModel {
   id: string;
@@ -51,7 +51,7 @@ export interface LlmUpdate {
 }
 
 export const llmApi = {
-  list: async (params: LlmListQuery): Promise<DataResult<LlmModel[]>> => {
+  list: async (params: LlmListQuery): Promise<DataResult<PageResult<LlmModel>>> => {
     return request.get("/llm/models/list", { params });
   },
 

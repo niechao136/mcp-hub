@@ -29,34 +29,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setStoreUser = useAuthStore((state) => state.setUser);
   const logoutStore = useAuthStore((state) => state.logout);
 
-  const { data, isFetching } = useProfile();
+  const { data, isFetching, isError } = useProfile();
 
   useEffect(() => {
+    const token = authApi.getToken();
+    if (!token) {
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
+
+    if (storeUser) {
+      setUser(storeUser);
+      setIsLoading(false);
+      return;
+    }
+
     if (data?.status === 1 && data.data) {
       setUser(data.data);
       setStoreUser(data.data);
       setIsLoading(false);
-    } else if (data?.status === 0) {
+    } else if (data?.status === 0 && data.msg === "Token expired" || data?.msg === "Invalid token") {
       setUser(null);
       setStoreUser(null);
       logoutStore();
       setIsLoading(false);
-    }
-  }, [data, setStoreUser, logoutStore]);
-
-  useEffect(() => {
-    if (storeUser && !isFetching && !data) {
-      setUser(storeUser);
+    } else if (!isFetching && !isError) {
       setIsLoading(false);
     }
-  }, [storeUser, isFetching, data]);
-
-  useEffect(() => {
-    if (!authApi.getToken()) {
-      setUser(null);
-      setIsLoading(false);
-    }
-  }, []);
+  }, [data, isFetching, isError, storeUser, setStoreUser, logoutStore]);
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading }}>

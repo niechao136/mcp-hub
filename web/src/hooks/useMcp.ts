@@ -8,7 +8,7 @@ export function useMcpServers(query: McpListQuery) {
     queryFn: () => mcpApi.list(query),
     select: (data) => ({
       ...data,
-      data: data.data,
+      data: data.data?.data || [],
     }),
   });
 }

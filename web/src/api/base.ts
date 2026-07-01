@@ -8,6 +8,13 @@ export interface DataResult<T> {
     data: T;
 }
 
+export interface PageResult<T> {
+    total: number;
+    data: T[];
+    page: number;
+    size: number;
+}
+
 const getAuthHeaders = () => {
     const token = Cookies.get("access_token");
     return {

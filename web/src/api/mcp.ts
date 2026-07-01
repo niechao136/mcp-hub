@@ -1,5 +1,5 @@
 import { request } from "./base";
-import type { DataResult } from "./base";
+import type { DataResult, PageResult } from "./base";
 
 export interface McpServer {
   id: string;
@@ -50,7 +50,7 @@ export interface McpUpdate {
 }
 
 export const mcpApi = {
-  list: async (params: McpListQuery): Promise<DataResult<McpServer[]>> => {
+  list: async (params: McpListQuery): Promise<DataResult<PageResult<McpServer>>> => {
     return request.get("/mcp/servers/list", { params });
   },
 

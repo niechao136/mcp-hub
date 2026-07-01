@@ -8,7 +8,7 @@ export function useAgents(query: AgentListQuery) {
     queryFn: () => agentApi.list(query),
     select: (data) => ({
       ...data,
-      data: data.data,
+      data: data.data?.data || [],
     }),
   });
 }

@@ -8,7 +8,7 @@ export function useLlmModels(query: LlmListQuery) {
     queryFn: () => llmApi.list(query),
     select: (data) => ({
       ...data,
-      data: data.data,
+      data: data.data?.data || [],
     }),
   });
 }
