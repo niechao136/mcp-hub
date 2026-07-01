@@ -19,15 +19,18 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 WORKDIR /app
 
-# 5. 复制依赖文件和源码
+# 5. 复制依赖文件
 COPY pyproject.toml uv.lock ./
+
+# 6. 正确的 sync 写法：
+# --frozen 避免联网更新 lock，--no-dev 排除开发依赖（如 pytest/black 等）
+RUN uv sync --frozen --no-dev
+
+# 7. 关键：把容器内生成的虚拟环境路径，加入到环境变量的最前面
+ENV PATH="/app/.venv/bin:$PATH"
+
+# 8. 复制源码（把复制源码放在安装依赖后面，可以完美利用 Docker 缓存层）
 COPY src ./src
 
-# 6. 安装依赖
-# --system 参数可以让 uv 直接把包装在容器的 Python 环境里，
-# 这样就不需要额外的虚拟环境层，容器更轻量
-RUN uv pip install --system --no-cache -r pyproject.toml || \
-    uv sync --system --no-cache
-
-# 8. 启动命令
-CMD ["uv", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# 9. 启动命令（因为上面已经把 .venv/bin 加到 PATH 了，直接呼叫 uvicorn 即可）
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
