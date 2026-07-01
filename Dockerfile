@@ -1,20 +1,23 @@
 # 1. 使用 Python 镜像
 FROM python:3.11-slim-bookworm
 
-# 2. 设置环境变量，强制 uv 安装到固定位置
-ENV UV_INSTALL_DIR="/usr/local/bin"
-ENV PATH="/usr/local/bin:${PATH}"
-# Python 环境变量优化
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# 2. 环境变量优化
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_INSTALL_DIR="/usr/local/bin" \
+    PATH="/usr/local/bin:${PATH}"
 
-# 3. 安装必要工具
+# 3. 安装必备编译工具（这是关键！）
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
+    gcc \
+    g++ \
+    make \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# 4. 直接安装 uv (它会自动装到 /usr/local/bin)
+# 4. 安装 uv（使用官方脚本）
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 WORKDIR /app
@@ -22,15 +25,18 @@ WORKDIR /app
 # 5. 复制依赖文件
 COPY pyproject.toml uv.lock ./
 
-# 6. 正确的 sync 写法：
-# --frozen 避免联网更新 lock，--no-dev 排除开发依赖（如 pytest/black 等）
-RUN uv sync --frozen --no-dev
+# 6. 使用挂载缓存加速重复构建（可选，但强烈推荐）
+#    同时指定 --python-platform 避免编译，--parallelism 限制并发
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev \
+    --python-platform x86_64-unknown-linux-gnu \
+    --parallelism 4
 
-# 7. 关键：把容器内生成的虚拟环境路径，加入到环境变量的最前面
+# 7. 将虚拟环境的 bin 加入 PATH
 ENV PATH="/app/.venv/bin:$PATH"
 
-# 8. 复制源码（把复制源码放在安装依赖后面，可以完美利用 Docker 缓存层）
+# 8. 复制源码（放在依赖安装之后，充分复用缓存）
 COPY src ./src
 
-# 9. 启动命令（因为上面已经把 .venv/bin 加到 PATH 了，直接呼叫 uvicorn 即可）
+# 9. 启动命令
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
